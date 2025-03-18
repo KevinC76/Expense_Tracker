@@ -5,8 +5,11 @@ const mongoose = require('mongoose');
 const express = require('express');
 const errorHandler = require('./handlers/errorHandlers');
 
+const userRoutes = require('./modules/users/users.routes');
+
 const app = express();
 
+// mongoose connection
 mongoose
   .connect(process.env.mongo_connection, {})
   .then(() => {
@@ -20,6 +23,9 @@ mongoose
 require('./models/users.model');
 
 app.use(express.json());
+
+// Routes
+app.use('/api/users', userRoutes);
 
 //error handler
 app.use(errorHandler);
