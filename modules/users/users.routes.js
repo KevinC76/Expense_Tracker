@@ -13,7 +13,6 @@ userRoutes.post('/login', login);
 // middleware
 userRoutes.use(auth);
 
-
 // protected route
 userRoutes.get('/dashboard', userDashboard);
 
