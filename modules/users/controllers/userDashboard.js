@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 
 const userDashboard = async (req, res) => {
   const usersModel = mongoose.model('users');
-
-  console.log(req.user);
+  const transactionsModel = mongoose.model('transactions');
 
   // filter the information using select
   const getUser = await usersModel
@@ -12,7 +11,14 @@ const userDashboard = async (req, res) => {
     })
     .select('-password');
 
-  res.status(200).json({ status: 'success', data: getUser });
+  const transactions = await transactionsModel
+    .find({
+      user_id: req.user._id,
+    })
+    .sort('-createdAt')
+    .limit(5);
+
+  res.status(200).json({ status: 'success', data: getUser, transactions });
 };
 
 module.exports = userDashboard;

@@ -6,6 +6,7 @@ const express = require('express');
 const errorHandler = require('./handlers/errorHandlers');
 
 const userRoutes = require('./modules/users/users.routes');
+const transactionsRoute = require('./modules/transactions/transactions.routes');
 
 const app = express();
 
@@ -21,11 +22,13 @@ mongoose
 
 //models initialization
 require('./models/users.model');
+require('./models/transactions.model');
 
 app.use(express.json());
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/transactions', transactionsRoute);
 
 //error handler
 app.use(errorHandler);
