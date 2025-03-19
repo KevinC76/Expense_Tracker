@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
-require('dotenv').config()
+require('dotenv').config();
 
 const login = async (req, res) => {
   const usersModel = mongoose.model('users');
