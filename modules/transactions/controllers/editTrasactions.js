@@ -3,7 +3,7 @@ const validator = require('validator');
 
 const editTransactions = async (req, res) => {
   const transactionsModel = mongoose.model('transactions');
-  const users = mongoose.model('users');
+  const usersModel = mongoose.model('users');
 
   const { transaction_id, remarks, amount, transaction_type } = req.body;
 
@@ -11,6 +11,11 @@ const editTransactions = async (req, res) => {
     throw 'Transaction type must be income or expense';
 
   if (!transaction_id) throw 'Please provide the id!';
+
+  if (!remarks) throw 'Remarks provide the id!';
+  if (!amount) throw 'Amount provide the id!';
+
+  if (amount < 0) throw 'amount can not be negative value';
 
   if (!validator.isMongoId(transaction_id.toString()))
     throw 'Provide a valid Id!';
@@ -20,6 +25,39 @@ const editTransactions = async (req, res) => {
   });
 
   if (!getTransaction) throw 'Transaction not found!';
+
+  if (transaction_type === getTransaction.transaction_type)
+    throw 'can not update the same same transaction type';
+
+  if (transaction_type === 'income') {
+    await usersModel.updateOne(
+      {
+        _id: getTransaction.user_id,
+      },
+      {
+        $inc: {
+          balance: amount,
+        },
+      },
+      {
+        runValidators: true,
+      }
+    );
+  } else {
+    await usersModel.updateOne(
+      {
+        _id: getTransaction.user_id,
+      },
+      {
+        $inc: {
+          balance: amount * -1,
+        },
+      },
+      {
+        runValidators: true,
+      }
+    );
+  }
 
   await transactionsModel.updateOne(
     {
